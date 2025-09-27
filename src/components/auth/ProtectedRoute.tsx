@@ -28,7 +28,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, allowedRoles 
 
   // Check role-based access if roles specified
   if (allowedRoles.length > 0) {
-    const userRole = user?.publicMetadata?.role as UserRole;
+    const userRole = user?.unsafeMetadata?.role as UserRole;
     
     if (!userRole || !allowedRoles.includes(userRole)) {
       // Redirect based on user role

@@ -7,15 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Clock, Brain, CheckCircle, Upload } from 'lucide-react';
+import InterviewStart from '@/components/interview/InterviewStart';
+import InterviewChatComponent from '@/components/interview/InterviewChat';
 
 const InterviewPage: React.FC = () => {
   return (
     <div className="min-h-screen pt-20 pb-8">
       <div className="container mx-auto px-4">
         <Routes>
-          <Route path="/" element={<InterviewHome />} />
+          <Route path="/" element={<InterviewStart />} />
           <Route path="/upload" element={<ResumeUpload />} />
-          <Route path="/chat" element={<InterviewChat />} />
+          <Route path="/chat" element={<InterviewChatComponent />} />
           <Route path="/results" element={<InterviewResults />} />
         </Routes>
       </div>

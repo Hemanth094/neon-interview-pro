@@ -3,8 +3,12 @@ import React from 'react';
 import { SignIn } from '@clerk/clerk-react';
 import { motion } from 'framer-motion';
 import ParticleBackground from '@/components/ui/ParticleBackground';
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
 
 const Login: React.FC = () => {
+  // Handle automatic redirects based on user role
+  useAuthRedirect();
+
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
       <ParticleBackground />
@@ -35,8 +39,8 @@ const Login: React.FC = () => {
                 footerActionLink: "text-primary hover:text-primary/80",
               }
             }}
-            redirectUrl="/dashboard"
-            afterSignInUrl="/dashboard"
+            redirectUrl="/select-role"
+            afterSignInUrl="/select-role"
           />
         </div>
       </motion.div>

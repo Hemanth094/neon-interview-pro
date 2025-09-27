@@ -22,7 +22,7 @@ const Navigation: React.FC = () => {
     signOut();
   };
 
-  const userRole = user?.publicMetadata?.role as string;
+  const userRole = user?.unsafeMetadata?.role as string;
   
   return (
     <motion.nav 

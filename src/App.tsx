@@ -13,6 +13,7 @@ import Navigation from '@/components/layout/Navigation';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import LandingPage from '@/pages/LandingPage';
 import Login from '@/pages/Login';
+import RoleSelection from '@/pages/RoleSelection';
 import InterviewPage from '@/pages/InterviewPage';
 import Dashboard from '@/pages/Dashboard';
 import NotFound from '@/pages/NotFound';
@@ -64,7 +65,7 @@ const App: React.FC = () => {
                   <Routes>
                     {/* Public Routes */}
                     <Route path="/" element={<LandingPage />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/select-role" element={<RoleSelection />} />
                     
                     {/* Protected Routes */}
                     <Route 

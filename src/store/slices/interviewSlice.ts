@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export type QuestionDifficulty = 'easy' | 'medium' | 'hard';
 
-interface Question {
+export interface Question {
   id: string;
   text: string;
   difficulty: QuestionDifficulty;
