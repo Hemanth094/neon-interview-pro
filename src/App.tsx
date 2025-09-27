@@ -17,12 +17,8 @@ import InterviewPage from '@/pages/InterviewPage';
 import Dashboard from '@/pages/Dashboard';
 import NotFound from '@/pages/NotFound';
 
-// Get Clerk Publishable Key from environment
-const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-if (!CLERK_PUBLISHABLE_KEY) {
-  console.warn('Missing Clerk Publishable Key. Please add VITE_CLERK_PUBLISHABLE_KEY to your environment variables.');
-}
+// Clerk Publishable Key (safe for client-side use)
+const CLERK_PUBLISHABLE_KEY = 'pk_test_d29ydGh5LXBvcnBvaXNlLTM0LmNsZXJrLmFjY291bnRzLmRldiQ';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,7 +42,7 @@ const LoadingScreen: React.FC = () => (
 const App: React.FC = () => {
   return (
     <ClerkProvider 
-      publishableKey={CLERK_PUBLISHABLE_KEY || ''}
+      publishableKey={CLERK_PUBLISHABLE_KEY}
       appearance={{
         baseTheme: undefined,
         variables: {
