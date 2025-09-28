@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Clock, Brain, CheckCircle, Upload } from 'lucide-react';
+import { Clock, CheckCircle, Upload } from 'lucide-react';
 import InterviewStart from '@/components/interview/InterviewStart';
 import InterviewChatComponent from '@/components/interview/InterviewChat';
 
@@ -63,7 +63,11 @@ const InterviewHome: React.FC = () => {
         <Card className="glass-panel">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5 text-primary" />
+              <img 
+                src="/favicon.svg" 
+                alt="Crisp AI Logo" 
+                className="h-5 w-5" 
+              />
               AI Interview
             </CardTitle>
           </CardHeader>

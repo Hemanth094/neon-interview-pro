@@ -1,7 +1,6 @@
 // Futuristic loader component with Crisp AI logo
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Zap } from 'lucide-react';
 
 interface FuturisticLoaderProps {
   message?: string;
@@ -25,22 +24,29 @@ const FuturisticLoader: React.FC<FuturisticLoaderProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-6">
+    <div className="flex flex-col items-center justify-center space-y-6 p-8">
       {/* Animated Logo Container */}
-      <div className="relative">
+      <div className="relative flex items-center justify-center">
         {/* Outer rotating ring */}
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 rounded-full border-2 border-primary/30 border-t-primary"
-          style={{ width: size === 'lg' ? '120px' : size === 'md' ? '80px' : '48px', height: size === 'lg' ? '120px' : size === 'md' ? '80px' : '48px' }}
+          className="absolute rounded-full border-2 border-primary/30 border-t-primary"
+          style={{ 
+            width: size === 'lg' ? '120px' : size === 'md' ? '80px' : '48px', 
+            height: size === 'lg' ? '120px' : size === 'md' ? '80px' : '48px' 
+          }}
         />
         
         {/* Inner pulsing ring */}
         <motion.div
           animate={{ scale: [0.8, 1.2, 0.8] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-2 rounded-full border border-accent/40"
+          className="absolute rounded-full border border-accent/40"
+          style={{ 
+            width: size === 'lg' ? '100px' : size === 'md' ? '60px' : '36px', 
+            height: size === 'lg' ? '100px' : size === 'md' ? '60px' : '36px' 
+          }}
         />
         
         {/* Logo container with glow */}
@@ -59,9 +65,13 @@ const FuturisticLoader: React.FC<FuturisticLoaderProps> = ({
           <motion.div
             animate={{ rotate: [-5, 5, -5] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="text-primary"
+            className="flex items-center justify-center"
           >
-            <Zap className={size === 'lg' ? 'h-12 w-12' : size === 'md' ? 'h-8 w-8' : 'h-5 w-5'} />
+            <img 
+              src="/favicon.svg" 
+              alt="Crisp AI Logo" 
+              className={size === 'lg' ? 'h-12 w-12' : size === 'md' ? 'h-8 w-8' : 'h-5 w-5'} 
+            />
           </motion.div>
         </motion.div>
         
