@@ -1,120 +1,8 @@
-// AI service for generating interview questions and evaluating answers using Gemini API
+// AI service for generating interview questions and evaluating answers
 import { QuestionDifficulty, Question } from '@/store/slices/interviewSlice';
 
-interface GeminiResponse {
-  candidates?: Array<{
-    content: {
-      parts: Array<{
-        text: string;
-      }>;
-    };
-  }>;
-  error?: {
-    message: string;
-    code: number;
-  };
-}
-
-interface QuestionGenerationResult {
-  questions: Array<{
-    text: string;
-    difficulty: QuestionDifficulty;
-    category: string;
-  }>;
-}
-
-interface EvaluationResult {
-  score: number;
-  feedback: string;
-  improvementTips: string[];
-  strengths: string[];
-}
-
-interface SummaryResult {
-  overallScore: number;
-  summary: string;
-  strengths: string[];
-  improvements: string[];
-}
-
+// Mock AI service - replace with actual Google AI API integration
 export class AIService {
-  private static readonly GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
-  
-  private static async callGeminiAPI(prompt: string): Promise<string> {
-    try {
-      // Get API key from environment (this will be set via Lovable Cloud secrets)
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        throw new Error('Gemini API key not found. Please configure GEMINI_API_KEY in your secrets.');
-      }
-
-      const response = await fetch(`${this.GEMINI_API_URL}?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: prompt }]
-          }]
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Gemini API error: ${errorData.error?.message || 'Unknown error'}`);
-      }
-
-      const data: GeminiResponse = await response.json();
-      
-      if (data.error) {
-        throw new Error(`Gemini API error: ${data.error.message}`);
-      }
-
-      if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-        throw new Error('Invalid response from Gemini API');
-      }
-
-      return data.candidates[0].content.parts[0].text;
-    } catch (error) {
-      console.error('Gemini API call failed:', error);
-      // Fallback to mock data if API fails
-      return this.getFallbackResponse(prompt);
-    }
-  }
-
-  private static getFallbackResponse(prompt: string): string {
-    if (prompt.includes('generate questions')) {
-      return JSON.stringify({
-        questions: [
-          {
-            text: "What is React and how does it differ from vanilla JavaScript?",
-            difficulty: "easy",
-            category: "React"
-          },
-          {
-            text: "How would you implement state management in a complex React application?",
-            difficulty: "medium", 
-            category: "React"
-          }
-        ]
-      });
-    } else if (prompt.includes('evaluate answer')) {
-      return JSON.stringify({
-        score: 7.5,
-        feedback: "Good understanding demonstrated with clear examples.",
-        improvementTips: ["Consider adding more technical details", "Provide specific use cases"],
-        strengths: ["Clear communication", "Good fundamental knowledge"]
-      });
-    } else {
-      return JSON.stringify({
-        overallScore: 7.2,
-        summary: "Solid technical performance with good communication skills.",
-        strengths: ["Strong fundamentals", "Clear explanations"],
-        improvements: ["Practice complex scenarios", "Add more technical depth"]
-      });
-    }
-  }
   private static readonly QUESTION_TEMPLATES = {
     easy: [
       "What is {concept}? Can you explain it in simple terms?",
@@ -148,80 +36,15 @@ export class AIService {
   };
 
   /**
-   * Generate interview questions based on difficulty and candidate background using Gemini AI
+   * Generate interview questions based on difficulty and candidate background
    */
   static async generateQuestions(
     difficulty: QuestionDifficulty,
     count: number = 2,
     resumeContext?: string
   ): Promise<Question[]> {
-    const prompt = this.createQuestionPrompt(difficulty, count, resumeContext);
-    
-    try {
-      const response = await this.callGeminiAPI(prompt);
-      const result: QuestionGenerationResult = JSON.parse(response);
-      
-      return result.questions.map((q, index) => ({
-        id: `${difficulty}_${Date.now()}_${index}`,
-        text: q.text,
-        difficulty: q.difficulty,
-        timeLimit: this.getTimeLimit(q.difficulty),
-        category: q.category
-      }));
-    } catch (error) {
-      console.error('Error generating questions:', error);
-      // Fallback to template-based generation
-      return this.generateFallbackQuestions(difficulty, count);
-    }
-  }
-
-  private static createQuestionPrompt(
-    difficulty: QuestionDifficulty,
-    count: number,
-    resumeContext?: string
-  ): string {
-    const difficultyGuide = {
-      easy: "Basic concepts, fundamental understanding, simple implementations",
-      medium: "Practical application, problem-solving, best practices, optimization",
-      hard: "Complex systems, architecture decisions, advanced concepts, trade-offs"
-    };
-
-    let prompt = `Generate ${count} interview questions for a software developer position.
-
-Difficulty: ${difficulty} (${difficultyGuide[difficulty]})
-`;
-
-    if (resumeContext) {
-      prompt += `Candidate Background: ${resumeContext}
-`;
-    }
-
-    prompt += `
-Requirements:
-- Questions should test ${difficulty}-level knowledge
-- Focus on practical, real-world scenarios
-- Include a mix of technical concepts and problem-solving
-- Questions should be clear and specific
-- Appropriate for a ${this.getTimeLimit(difficulty)} minute response
-
-Return response as JSON:
-{
-  "questions": [
-    {
-      "text": "Question text here",
-      "difficulty": "${difficulty}",
-      "category": "React/JavaScript/System Design/etc"
-    }
-  ]
-}`;
-
-    return prompt;
-  }
-
-  private static generateFallbackQuestions(
-    difficulty: QuestionDifficulty,
-    count: number
-  ): Question[] {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
 
     const questions: Question[] = [];
     const templates = this.QUESTION_TEMPLATES[difficulty];
@@ -244,81 +67,18 @@ Return response as JSON:
   }
 
   /**
-   * Evaluate candidate's answer using Gemini AI
+   * Evaluate candidate's answer using AI
    */
   static async evaluateAnswer(
     questionText: string,
     answerText: string,
     difficulty: QuestionDifficulty,
     timeSpent: number
-  ): Promise<{ score: number; feedback: string; improvementTips?: string[]; strengths?: string[] }> {
-    const prompt = this.createEvaluationPrompt(questionText, answerText, difficulty, timeSpent);
-    
-    try {
-      const response = await this.callGeminiAPI(prompt);
-      const result: EvaluationResult = JSON.parse(response);
-      
-      return {
-        score: Math.round(result.score * 10) / 10,
-        feedback: result.feedback,
-        improvementTips: result.improvementTips,
-        strengths: result.strengths
-      };
-    } catch (error) {
-      console.error('Error evaluating answer:', error);
-      // Fallback to mock evaluation
-      return this.evaluateFallback(questionText, answerText, difficulty, timeSpent);
-    }
-  }
+  ): Promise<{ score: number; feedback: string }> {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 2000));
 
-  private static createEvaluationPrompt(
-    questionText: string,
-    answerText: string,
-    difficulty: QuestionDifficulty,
-    timeSpent: number
-  ): string {
-    const timeLimit = this.getTimeLimit(difficulty);
-    const timeRatio = timeSpent / timeLimit;
-
-    return `Evaluate this interview answer professionally and constructively.
-
-Question: ${questionText}
-Difficulty Level: ${difficulty}
-Time Spent: ${timeSpent} seconds (${timeLimit} seconds allowed)
-
-Candidate's Answer:
-${answerText}
-
-Evaluation Criteria:
-- Technical accuracy and depth
-- Clarity of explanation
-- Practical examples and use cases
-- Understanding of concepts
-- Communication effectiveness
-- Time management (${timeRatio > 1 ? 'overtime' : 'within time'})
-
-Provide scoring on a scale of 0-10 where:
-- 9-10: Exceptional (expert-level understanding, comprehensive answer)
-- 7-8: Strong (good understanding, well-explained)
-- 5-6: Average (basic understanding, adequate explanation)
-- 3-4: Below Average (limited understanding, unclear)
-- 0-2: Poor (incorrect or no understanding)
-
-Return response as JSON:
-{
-  "score": 7.5,
-  "feedback": "Constructive feedback paragraph",
-  "improvementTips": ["Specific tip 1", "Specific tip 2"],
-  "strengths": ["What they did well 1", "What they did well 2"]
-}`;
-  }
-
-  private static evaluateFallback(
-    questionText: string,
-    answerText: string,
-    difficulty: QuestionDifficulty,
-    timeSpent: number
-  ): { score: number; feedback: string; improvementTips?: string[]; strengths?: string[] } {
+    // Mock evaluation logic
     const baseScore = this.calculateBaseScore(answerText, difficulty);
     const timeBonus = this.calculateTimeBonus(timeSpent, difficulty);
     const finalScore = Math.min(10, Math.max(0, baseScore + timeBonus));
@@ -327,14 +87,12 @@ Return response as JSON:
 
     return {
       score: Math.round(finalScore * 10) / 10,
-      feedback,
-      improvementTips: ["Practice explaining concepts with more examples", "Consider edge cases in your solutions"],
-      strengths: ["Good communication", "Clear structure"]
+      feedback
     };
   }
 
   /**
-   * Generate final interview summary using Gemini AI
+   * Generate final interview summary
    */
   static async generateSummary(
     answers: Array<{
@@ -345,74 +103,9 @@ Return response as JSON:
       timeSpent: number;
     }>
   ): Promise<{ overallScore: number; summary: string; strengths: string[]; improvements: string[] }> {
-    const prompt = this.createSummaryPrompt(answers);
-    
-    try {
-      const response = await this.callGeminiAPI(prompt);
-      const result: SummaryResult = JSON.parse(response);
-      
-      return {
-        overallScore: Math.round(result.overallScore * 10) / 10,
-        summary: result.summary,
-        strengths: result.strengths,
-        improvements: result.improvements
-      };
-    } catch (error) {
-      console.error('Error generating summary:', error);
-      // Fallback to mock summary generation
-      return this.generateFallbackSummary(answers);
-    }
-  }
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
 
-  private static createSummaryPrompt(
-    answers: Array<{
-      questionText: string;
-      answerText: string;
-      difficulty: QuestionDifficulty;
-      score?: number;
-      timeSpent: number;
-    }>
-  ): string {
-    const questionAnswerPairs = answers.map((a, index) => `
-Q${index + 1} (${a.difficulty}): ${a.questionText}
-Answer: ${a.answerText}
-Score: ${a.score || 'Not scored'}
-Time: ${a.timeSpent}s
-`).join('\n');
-
-    return `Analyze this complete interview performance and provide an executive summary.
-
-Interview Results:
-${questionAnswerPairs}
-
-Please evaluate:
-- Overall technical competency
-- Communication effectiveness  
-- Problem-solving approach
-- Areas of strength
-- Growth opportunities
-- Hiring recommendation context
-
-Calculate overall score as weighted average considering difficulty levels.
-
-Return response as JSON:
-{
-  "overallScore": 7.2,
-  "summary": "Professional paragraph summarizing candidate performance and fit",
-  "strengths": ["Key strength 1", "Key strength 2", "Key strength 3"],
-  "improvements": ["Development area 1", "Development area 2", "Development area 3"]
-}`;
-  }
-
-  private static generateFallbackSummary(
-    answers: Array<{
-      questionText: string;
-      answerText: string;
-      difficulty: QuestionDifficulty;
-      score?: number;
-      timeSpent: number;
-    }>
-  ): { overallScore: number; summary: string; strengths: string[]; improvements: string[] } {
     const scores = answers.filter(a => a.score).map(a => a.score!);
     const overallScore = scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
 

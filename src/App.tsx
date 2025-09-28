@@ -17,11 +17,9 @@ import RoleSelection from '@/pages/RoleSelection';
 import InterviewPage from '@/pages/InterviewPage';
 import Dashboard from '@/pages/Dashboard';
 import NotFound from '@/pages/NotFound';
-import FuturisticLoader from '@/components/ui/FuturisticLoader';
 
 // Clerk Publishable Key (safe for client-side use)
-// Note: This is a development key with usage limits - replace with production key for deployment
-const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || 'pk_test_d29ydGh5LXBvcnBvaXNlLTM0LmNsZXJrLmFjY291bnRzLmRldiQ';
+const CLERK_PUBLISHABLE_KEY = 'pk_test_d29ydGh5LXBvcnBvaXNlLTM0LmNsZXJrLmFjY291bnRzLmRldiQ';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,7 +33,10 @@ const queryClient = new QueryClient({
 // Loading component for Redux persistence
 const LoadingScreen: React.FC = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">
-    <FuturisticLoader size="lg" message="Loading Crisp AI..." />
+    <div className="text-center">
+      <div className="animate-spin h-12 w-12 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+      <p className="text-muted-foreground">Loading Crisp AI...</p>
+    </div>
   </div>
 );
 
@@ -57,19 +58,13 @@ const App: React.FC = () => {
         <PersistGate loading={<LoadingScreen />} persistor={persistor}>
           <QueryClientProvider client={queryClient}>
             <TooltipProvider>
-              <BrowserRouter
-                future={{
-                  v7_startTransition: true,
-                  v7_relativeSplatPath: true
-                }}
-              >
+              <BrowserRouter>
                 <div className="min-h-screen bg-background text-foreground">
                   <Navigation />
                   
                   <Routes>
                     {/* Public Routes */}
                     <Route path="/" element={<LandingPage />} />
-                    <Route path="/login" element={<Login />} />
                     <Route path="/select-role" element={<RoleSelection />} />
                     
                     {/* Protected Routes */}

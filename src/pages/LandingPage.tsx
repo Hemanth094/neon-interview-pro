@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import ParticleBackground from '@/components/ui/ParticleBackground';
 import { 
   Zap, 
+  Brain, 
   Clock, 
   Shield, 
   Target, 
@@ -21,7 +22,7 @@ import {
 const LandingPage: React.FC = () => {
   const features = [
     {
-      icon: "logo",
+      icon: Brain,
       title: "AI-Powered Questions",
       description: "Advanced AI generates tailored questions based on Full-Stack development roles"
     },
@@ -151,15 +152,7 @@ const LandingPage: React.FC = () => {
                 <Card className="glass-panel border-border/50 h-full hover:border-primary/50 transition-all duration-300">
                   <CardHeader>
                     <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:glow-primary transition-all">
-                      {feature.icon === "logo" ? (
-                        <img 
-                          src="/favicon.svg" 
-                          alt="Crisp AI Logo" 
-                          className="h-6 w-6" 
-                        />
-                      ) : (
-                        <feature.icon className="h-6 w-6 text-primary" />
-                      )}
+                      <feature.icon className="h-6 w-6 text-primary" />
                     </div>
                     <CardTitle className="text-lg">{feature.title}</CardTitle>
                   </CardHeader>

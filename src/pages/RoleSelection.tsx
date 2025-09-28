@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Users, ChevronRight } from 'lucide-react';
+import { Users, Brain, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ParticleBackground from '@/components/ui/ParticleBackground';
 import FuturisticLoader from '@/components/ui/FuturisticLoader';
@@ -113,11 +113,7 @@ const RoleSelection: React.FC = () => {
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-primary/20">
-                      <img 
-                        src="/favicon.svg" 
-                        alt="Crisp AI Logo" 
-                        className="h-6 w-6" 
-                      />
+                      <Brain className="h-6 w-6 text-primary" />
                     </div>
                     <span>Candidate</span>
                   </div>
