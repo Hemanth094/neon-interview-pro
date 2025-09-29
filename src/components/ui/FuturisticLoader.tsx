@@ -68,7 +68,7 @@ const FuturisticLoader: React.FC<FuturisticLoaderProps> = ({
             className="flex items-center justify-center"
           >
             <img 
-              src="/favicon.svg" 
+              src="/src/assets/crisp-ai-logo.png" 
               alt="Crisp AI Logo" 
               className={size === 'lg' ? 'h-12 w-12' : size === 'md' ? 'h-8 w-8' : 'h-5 w-5'} 
             />

@@ -34,7 +34,7 @@ const Navigation: React.FC = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2 hover-glow-primary">
           <img 
-            src="/favicon.svg" 
+            src="/src/assets/crisp-ai-logo.png" 
             alt="Crisp AI Logo" 
             className="h-6 w-6" 
           />

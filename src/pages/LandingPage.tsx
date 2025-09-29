@@ -153,7 +153,7 @@ const LandingPage: React.FC = () => {
                     <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:glow-primary transition-all">
                       {feature.icon === "logo" ? (
                         <img 
-                          src="/favicon.svg" 
+                          src="/src/assets/crisp-ai-logo.png" 
                           alt="Crisp AI Logo" 
                           className="h-6 w-6" 
                         />
