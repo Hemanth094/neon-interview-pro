@@ -6,11 +6,10 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Users, ChevronRight, Zap } from 'lucide-react';
+import { Users, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import ParticleBackground from '@/components/ui/ParticleBackground';
 import FuturisticLoader from '@/components/ui/FuturisticLoader';
-import { createOrUpdateProfile } from '@/services/userService';
 
 const RoleSelection: React.FC = () => {
   const { user } = useUser();
@@ -25,9 +24,6 @@ const RoleSelection: React.FC = () => {
     setIsUpdating(true);
     
     try {
-      // Create or update profile in Supabase first
-      await createOrUpdateProfile(user, role);
-      
       // Update user metadata with selected role
       await user.update({
         unsafeMetadata: {
@@ -98,7 +94,7 @@ const RoleSelection: React.FC = () => {
           </motion.p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {/* Candidate Role */}
           <motion.div
             initial={{ x: -50, opacity: 0 }}
@@ -108,7 +104,7 @@ const RoleSelection: React.FC = () => {
             className="relative"
           >
             <Card 
-              className={`glass-panel cursor-pointer transition-all hover:border-primary/70 h-full ${
+              className={`glass-panel cursor-pointer transition-all hover:border-primary/70 ${
                 selectedRole === 'candidate' ? 'border-primary shadow-primary/20' : ''
               }`}
               onClick={() => setSelectedRole('candidate')}
@@ -117,7 +113,11 @@ const RoleSelection: React.FC = () => {
                 <CardTitle className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-primary/20">
-                      <Zap className="h-6 w-6 text-primary" />
+                      <img 
+                        src="/favicon.svg" 
+                        alt="Crisp AI Logo" 
+                        className="h-6 w-6" 
+                      />
                     </div>
                     <span>Candidate</span>
                   </div>
@@ -126,7 +126,7 @@ const RoleSelection: React.FC = () => {
                   </Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
+              <CardContent className="space-y-4">
                 <p className="text-muted-foreground">
                   Take AI-powered interviews with adaptive questions and real-time feedback.
                 </p>
@@ -173,7 +173,7 @@ const RoleSelection: React.FC = () => {
             className="relative"
           >
             <Card 
-              className={`glass-panel cursor-pointer transition-all hover:border-secondary/70 h-full ${
+              className={`glass-panel cursor-pointer transition-all hover:border-secondary/70 ${
                 selectedRole === 'interviewer' ? 'border-secondary shadow-secondary/20' : ''
               }`}
               onClick={() => setSelectedRole('interviewer')}
@@ -191,7 +191,7 @@ const RoleSelection: React.FC = () => {
                   </Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
+              <CardContent className="space-y-4">
                 <p className="text-muted-foreground">
                   Review candidate interviews, analyze performance, and manage the interview process.
                 </p>
