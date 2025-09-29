@@ -10,7 +10,6 @@ import { Progress } from '@/components/ui/progress';
 import { 
   Send, 
   Clock, 
-  Brain, 
   MessageCircle,
   CheckCircle,
   AlertCircle,
@@ -44,7 +43,7 @@ const InterviewChat: React.FC = () => {
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [finalResults, setFinalResults] = useState<any>(null);
+  const [finalResults, setFinalResultsState] = useState<any>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout>();
@@ -241,7 +240,7 @@ const InterviewChat: React.FC = () => {
         })
       );
 
-      setFinalResults(results);
+      setFinalResultsState(results);
       
       dispatch(setFinalResults({
         score: results.overallScore,
@@ -294,7 +293,11 @@ const InterviewChat: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-primary/20">
-              <Brain className="h-6 w-6 text-primary" />
+              <img 
+                src="/favicon.svg" 
+                alt="Crisp AI Logo" 
+                className="h-6 w-6" 
+              />
             </div>
             <div>
               <h2 className="text-xl font-bold gradient-text">AI Interview Session</h2>
@@ -347,7 +350,11 @@ const InterviewChat: React.FC = () => {
                             <Sparkles className="h-4 w-4" />
                           </motion.div>
                         ) : (
-                          <Brain className="h-4 w-4" />
+                          <img 
+                            src="/favicon.svg" 
+                            alt="Crisp AI Logo" 
+                            className="h-4 w-4" 
+                          />
                         )}
                       </div>
                     )}

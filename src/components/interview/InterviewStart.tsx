@@ -1,5 +1,5 @@
 // Interview start component with question generation
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -12,10 +12,11 @@ import {
   Play, 
   FileText, 
   Clock, 
-  Brain,
   AlertTriangle,
   CheckCircle,
-  Upload
+  Upload,
+  X,
+  File
 } from 'lucide-react';
 import { RootState } from '@/store';
 import { startInterview, type Question } from '@/store/slices/interviewSlice';
@@ -34,6 +35,9 @@ const InterviewStart: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [resumeText, setResumeText] = useState('');
   const [profileComplete, setProfileComplete] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isProcessingFile, setIsProcessingFile] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleStartInterview = async () => {
     if (!profileComplete) {
@@ -96,6 +100,74 @@ const InterviewStart: React.FC = () => {
     }
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        title: "Invalid File Type",
+        description: "Please upload a PDF, DOC, DOCX, or TXT file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File Too Large",
+        description: "Please upload a file smaller than 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setUploadedFile(file);
+    setIsProcessingFile(true);
+
+    try {
+      // For now, we'll extract text from the file
+      // In a real application, you'd want to use a proper PDF/text extraction service
+      let extractedText = '';
+      
+      if (file.type === 'text/plain') {
+        extractedText = await file.text();
+      } else {
+        // For PDF/DOC files, we'll show a message to paste the content manually
+        // In production, you'd integrate with a service like Adobe PDF Services or similar
+        toast({
+          title: "File Uploaded",
+          description: "Please copy and paste the content from your file below, or type your background information.",
+        });
+        setResumeText(prev => prev + `\n\n[Content from ${file.name} - please paste the text content here]`);
+      }
+
+      if (extractedText) {
+        setResumeText(prev => prev + extractedText);
+      }
+
+    } catch (error) {
+      console.error('Error processing file:', error);
+      toast({
+        title: "Error Processing File",
+        description: "Could not extract text from the file. Please paste the content manually.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessingFile(false);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setUploadedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleCompleteProfile = () => {
     if (!resumeText.trim()) {
       toast({
@@ -136,7 +208,7 @@ const InterviewStart: React.FC = () => {
           AI Interview Assistant
         </h1>
         <p className="text-xl text-muted-foreground">
-          Get ready for your personalized Full-Stack Developer interview
+          Get ready for your personalized interview
         </p>
       </motion.div>
 
@@ -155,6 +227,61 @@ const InterviewStart: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* File Upload Section */}
+              <div className="space-y-4">
+                <Label>Upload Resume (Optional)</Label>
+                <div className="border-2 border-dashed border-border/50 rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.doc,.docx,.txt"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  
+                  {!uploadedFile ? (
+                    <div 
+                      className="cursor-pointer"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-lg font-medium mb-2">Click to upload your resume</p>
+                      <p className="text-sm text-muted-foreground">
+                        Supports PDF, DOC, DOCX, and TXT files (max 5MB)
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between p-4 bg-muted/20 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <File className="h-8 w-8 text-primary" />
+                        <div>
+                          <p className="font-medium">{uploadedFile.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleRemoveFile}
+                        disabled={isProcessingFile}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {isProcessingFile && (
+                    <div className="mt-4 flex items-center justify-center gap-2">
+                      <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
+                      <span className="text-sm text-muted-foreground">Processing file...</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Manual Input Section */}
               <div className="space-y-2">
                 <Label htmlFor="resume">Resume/Background Information</Label>
                 <Textarea
@@ -173,10 +300,17 @@ const InterviewStart: React.FC = () => {
               <Button 
                 onClick={handleCompleteProfile}
                 variant="neon"
-                disabled={!resumeText.trim()}
+                disabled={!resumeText.trim() || isProcessingFile}
                 className="w-full"
               >
-                Complete Profile
+                {isProcessingFile ? (
+                  <>
+                    <div className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full mr-2"></div>
+                    Processing...
+                  </>
+                ) : (
+                  'Complete Profile'
+                )}
               </Button>
             </CardContent>
           </Card>
@@ -192,7 +326,11 @@ const InterviewStart: React.FC = () => {
           <Card className="glass-panel">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Brain className="h-5 w-5 text-primary" />
+                <img 
+                  src="/favicon.svg" 
+                  alt="Crisp AI Logo" 
+                  className="h-5 w-5" 
+                />
                 Interview Format
               </CardTitle>
             </CardHeader>

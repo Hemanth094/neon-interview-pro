@@ -10,7 +10,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import { LogOut, User, Settings, Zap } from 'lucide-react';
+import { LogOut, User, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Navigation: React.FC = () => {
@@ -33,7 +33,11 @@ const Navigation: React.FC = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2 hover-glow-primary">
-          <Zap className="h-6 w-6 text-accent" />
+          <img 
+            src="/favicon.svg" 
+            alt="Crisp AI Logo" 
+            className="h-6 w-6" 
+          />
           <span className="font-bold text-xl gradient-text">Crisp AI</span>
         </Link>
 
